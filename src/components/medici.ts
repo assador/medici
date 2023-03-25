@@ -22,8 +22,8 @@ export enum Rank {
 };
 
 export interface Card {
-  suit: Suit;
-  rank: Rank;
+  suit: string;
+  rank: string;
 };
 
 export class Deck {
@@ -31,17 +31,23 @@ export class Deck {
   cards: Card[];
   openCards: Card[];
   currentIndex: number;
+  played: boolean;
   constructor(size = 36) {
     if (size <= 0 || size > 52 || size % 4 !== 0) throw new Error(
       `Incorrect number of cards when creating a new deck: ${size}.`
     );
     this.size = size;
+    this.cards = [];
+    this.openCards = [];
+    this.currentIndex = this.size - 1;
+    this.played = false;
     this.reset();
   }
   create(): void {
     this.cards = [];
     this.openCards = [];
     this.currentIndex = this.size - 1;
+    this.played = false;
     for (let suit in Suit) {
       for (let rank of Object.keys(Rank).slice(
         Object.keys(Rank).length - this.size / Object.keys(Suit).length
@@ -64,10 +70,16 @@ export class Deck {
     this.shuffle();
   }
   printCards(): string {
-    return this.cards.map(card => Rank[card.rank] + Suit[card.suit]).reverse().join(' ');
+    return this.cards.map(card => 
+      Rank[card.rank as keyof typeof Rank] +
+      Suit[card.suit as keyof typeof Suit]
+    ).reverse().join(' ');
   }
   printOpenCards(): string {
-    return this.openCards.map(card => Rank[card.rank] + Suit[card.suit]).join(' ');
+    return this.openCards.map(card =>
+      Rank[card.rank as keyof typeof Rank] +
+      Suit[card.suit as keyof typeof Suit]
+    ).join(' ');
   }
   nextCard(): void {
     if (this.currentIndex < 0) return;
@@ -95,11 +107,11 @@ export class Deck {
   }
 }
 
-export const tryFor = (deck: Deck, tries?: number = 5000): void => {
+export const tryFor = (deck: Deck, tries: number = 5000): string => {
   for (let i = 1; i <= tries; i++) {
     deck.reset();
     deck.play();
-    if (deck.openCards.length === 2) return `Всем …! Получилось! Колупался ${i} раз…`;
+    if (deck.openCards.length === 2) return `Получилось, итить! На ${i} раз…`;
   }
   return `Ну, я хотя бы попробовал ${tries} раз…`;
 }

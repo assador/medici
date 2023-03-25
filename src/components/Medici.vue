@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Deck, tryFor } from './medici.ts';
+import { Deck, tryFor } from './medici';
 
 const deck = ref(new Deck());
 let result = '';

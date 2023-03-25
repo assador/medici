@@ -31,6 +31,7 @@ export class Deck {
   cards: Card[];
   openCards: Card[];
   currentIndex: number;
+  shiftIndexes: number[];
   played: boolean;
   constructor(size = 36) {
     if (size <= 0 || size > 52 || size % 4 !== 0) throw new Error(
@@ -40,6 +41,7 @@ export class Deck {
     this.cards = [];
     this.openCards = [];
     this.currentIndex = this.size - 1;
+    this.shiftIndexes = [];
     this.played = false;
     this.reset();
   }
@@ -47,6 +49,7 @@ export class Deck {
     this.cards = [];
     this.openCards = [];
     this.currentIndex = this.size - 1;
+    this.shiftIndexes = [];
     this.played = false;
     for (let suit in Suit) {
       for (let rank of Object.keys(Rank).slice(
@@ -70,10 +73,14 @@ export class Deck {
     this.shuffle();
   }
   printCards(): string {
-    return this.cards.map(card => 
-      Rank[card.rank as keyof typeof Rank] +
-      Suit[card.suit as keyof typeof Suit]
-    ).reverse().join(' ');
+    return (
+      (this.shiftIndexes.length > 0 ? '<' : '') +
+      this.cards.map((card, i) => 
+        Rank[card.rank as keyof typeof Rank] +
+        Suit[card.suit as keyof typeof Suit] +
+        (this.shiftIndexes.includes(i) ? ' >' + (i > 0 ? '<' : '') : '')
+      ).reverse().join(' ')
+    );
   }
   printOpenCards(): string {
     return this.openCards.map(card =>
@@ -86,22 +93,27 @@ export class Deck {
     this.openCards.push(this.cards[this.currentIndex]);
     this.currentIndex--;
   }
-  shiftCards(cards: Card[], index: number) {
+  shiftCards(cards: Card[], index: number): boolean {
+    let shifted = false;
     if (cards[index - 2] && (
       cards[index].suit === cards[index - 2].suit ||
       cards[index].rank === cards[index - 2].rank
     )) {
       cards.splice(index - 2, 1);
       index -= 2;
+      shifted = true;
     } else if (cards[index + 1]) {
       index += 1;
-    } else return;
+    } else return shifted;
     this.shiftCards(this.openCards, index);
+    return shifted;
   }
   play(): void {
     for (let i = this.cards.length - 1; i >= 0; i--) {
       this.nextCard();
-      this.shiftCards(this.openCards, this.openCards.length - 1);
+      this.shiftCards(this.openCards, this.openCards.length - 1)
+        && this.shiftIndexes.push(i)
+      ;
     }
     this.played = true;
   }

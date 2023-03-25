@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Deck } from './medici.ts';
+import { Deck, tryFor } from './medici.ts';
 
-const deck: Deck = new Deck();
+const deck = ref(new Deck());
+let result = '';
 </script>
 
 <template>
-  <pre>{{ deck }}</pre>
+  <button type="button" @click="result = tryFor(deck)">Сложиить</button>
+  <div>Колода:<br />{{ deck.printCards() }}</div>
+  <div>Осталось:<br />{{ deck.printOpenCards() }}</div>
+  <div>{{ result }}</div>
 </template>

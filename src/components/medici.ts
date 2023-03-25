@@ -30,15 +30,13 @@ export class Deck {
   size: number;
   cards: Card[];
   constructor(size = 36) {
+    if (size <= 0 || size > 52 || size % 4 !== 0) throw new Error(
+      `Incorrect number of cards when creating a new deck: ${size}.`
+    );
     this.size = size;
     this.reset();
   }
   create(): void {
-    if (this.size <= 0 || this.size > 52 || this.size % 4 !== 0) {
-      throw new Error(
-        `Incorrect number of cards when creating a new deck: ${this.size}.`
-      );
-    }
     this.cards = [];
     const suitsTotal = Object.keys(Suit).filter(isNaN).length;
     const ranksTotal = Object.keys(Rank).filter(isNaN).length;

@@ -29,6 +29,8 @@ export interface Card {
 export class Deck {
   size: number;
   cards: Card[];
+  openCards: Card[];
+  currentIndex: number;
   constructor(size = 36) {
     if (size <= 0 || size > 52 || size % 4 !== 0) throw new Error(
       `Incorrect number of cards when creating a new deck: ${size}.`
@@ -38,6 +40,8 @@ export class Deck {
   }
   create(): void {
     this.cards = [];
+    this.openCards = [];
+    this.currentIndex = this.size - 1;
     const suitsTotal = Object.keys(Suit).filter(isNaN).length;
     const ranksTotal = Object.keys(Rank).filter(isNaN).length;
     for (let s = 0; s < suitsTotal; s++) {
@@ -55,9 +59,12 @@ export class Deck {
       [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
     }
   }
-  reset(size?: number) {
-    if (size) this.size = size;
+  reset() {
     this.create();
     this.shuffle();
+  }
+  nextCard() {
+    this.openCards.push(this.cards[this.currentIndex]);
+    this.currentIndex--;
   }
 }

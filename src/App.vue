@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Medici from './components/Medici.vue';
+import MediciSolitaireCalculator from './components/MediciSolitaireCalculator/MediciSolitaireCalculator.vue';
 </script>
 
 <template>
-  <Medici />
+  <MediciSolitaireCalculator />
 </template>

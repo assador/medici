@@ -32,6 +32,7 @@ export class Deck {
   openCards: Card[];
   currentIndex: number;
   shiftIndexes: number[];
+  staticCards: {index: number, card: Card}[];
   played: boolean;
   constructor(size = 36) {
     if (size <= 0 || size > 52 || size % 4 !== 0) throw new Error(
@@ -42,14 +43,16 @@ export class Deck {
     this.openCards = [];
     this.currentIndex = this.size - 1;
     this.shiftIndexes = [];
+    this.staticCards = [];
     this.played = false;
-    this.reset();
+    this.create();
   }
   create(): void {
     this.cards = [];
     this.openCards = [];
     this.currentIndex = this.size - 1;
     this.shiftIndexes = [];
+    this.staticCards = [];
     this.played = false;
     for (let suit in Suit) {
       for (let rank of Object.keys(Rank).slice(
@@ -67,10 +70,6 @@ export class Deck {
       let j = Math.floor(Math.random() * (i + 1));
       [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
     }
-  }
-  reset(): void {
-    this.create();
-    this.shuffle();
   }
   printCards(): string {
     return (
@@ -121,7 +120,8 @@ export class Deck {
 
 export const tryFor = (deck: Deck, tries: number = 5000): string => {
   for (let i = 1; i <= tries; i++) {
-    deck.reset();
+    deck.create();
+    deck.shuffle();
     deck.play();
     if (deck.openCards.length === 2) return `Получилось, итить! На ${i} раз…`;
   }

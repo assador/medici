@@ -1,17 +1,27 @@
 .msc {
   display: grid;
   grid-template-areas:
-    ' service basic '
+    ' header  header '
+    ' service basic  '
   ;
-  grid-template-columns: auto 1fr;
-  align-items: center;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: min-content 1fr;
   justify-items: center;
   width: 100%;
   height: 100%;
   gap: 20px;
+  .msc-header {
+    grid-area: header;
+  }
   .msc-deck, .msc-shift {
     display: flex;
     flex-wrap: wrap;
+  }
+  .msc-deck-auxiliary {
+    flex-wrap: nowrap;
+    .msc-shift {
+      justify-content: right;
+    }
   }
   .msc-shift {
     margin: 4px;

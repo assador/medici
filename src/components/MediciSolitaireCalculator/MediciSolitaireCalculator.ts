@@ -28,29 +28,25 @@ export interface Card {
 
 export class Deck {
   size: number;
-  cards: Card[];
-  openCards: Card[];
   currentIndex: number;
-  shiftIndexes: number[];
-  staticCards: {index: number, card: Card}[];
-  played: boolean;
+  cards: Card[] = [];
+  openCards: Card[] = [];
+  shiftIndexes: number[] = [];
+  staticCards: {index: number, card: Card}[] = [];
+  played: boolean = false;
   constructor(size = 36) {
     if (size <= 0 || size > 52 || size % 4 !== 0) throw new Error(
       `Incorrect number of cards when creating a new deck: ${size}.`
     );
     this.size = size;
-    this.cards = [];
-    this.openCards = [];
     this.currentIndex = this.size - 1;
-    this.shiftIndexes = [];
-    this.staticCards = [];
-    this.played = false;
-    this.create();
+    this.create(size);
   }
-  create(): void {
+  create(size = 36): void {
+    this.size = size;
+    this.currentIndex = this.size - 1;
     this.cards = [];
     this.openCards = [];
-    this.currentIndex = this.size - 1;
     this.shiftIndexes = [];
     this.staticCards = [];
     this.played = false;
@@ -68,7 +64,9 @@ export class Deck {
   shuffle(): void {
     for (let i = this.cards.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * (i + 1));
-      [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
+      if (this.staticCards.findIndex(s => s.index === i || s.index === j) === -1) {
+        [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
+      }
     }
   }
   nextCard(): void {
@@ -100,9 +98,36 @@ export class Deck {
     }
     this.played = true;
   }
+  setStaticCard(index: number, card: Card): void {
+    // Проверка существования задаваемого индекса
+    if (!this.cards[index]) return;
+    // Нахождение индекса в колоде задаваемой карты
+    const cardIndex = this.cards.findIndex(
+      c => c.suit === card.suit && c.rank === card.rank
+    );
+    if (cardIndex === -1 || cardIndex === index) return;
+    const existingIndex = this.staticCards.findIndex(
+      s => (s.index === index || s.card.suit === card.suit && s.card.rank === card.rank)
+    );
+    if (existingIndex !== -1) this.staticCards.splice(existingIndex, 1);
+    this.staticCards.push({index: index, card: this.cards[cardIndex]});
+    [
+      this.cards[cardIndex],
+      this.cards[index]
+    ] = [
+      this.cards[index],
+      this.cards[cardIndex]
+    ];
+  }
+  unsetStaticCard(index: number): void {
+    const existingIndex = this.staticCards.findIndex(s => s.index === index);
+    if (existingIndex !== -1) this.staticCards.splice(existingIndex, 1);
+  }
   cardsByShifts(): Card[][] {
     let shifts: Card[][] = [];
-    if (this.shiftIndexes.length === 0) return shifts = [this.cards];
+    if (this.shiftIndexes.length === 0)
+      return shifts = [this.cards.slice().reverse()]
+    ;
     for (let i = 0; i < this.shiftIndexes.length; i++) {
       shifts.push(this.cards.slice(
         this.shiftIndexes[i],
@@ -111,27 +136,13 @@ export class Deck {
     }
     return shifts;
   }
-  printCards(): string {
-    return (
-      (this.shiftIndexes.length > 0 ? '<' : '') +
-      this.cards.map((card, i) => 
-        Rank[card.rank as keyof typeof Rank] +
-        Suit[card.suit as keyof typeof Suit] +
-        (this.shiftIndexes.includes(i) ? ' >' + (i > 0 ? '<' : '') : '')
-      ).reverse().join(' ')
-    );
-  }
-  printOpenCards(): string {
-    return this.openCards.map(card =>
-      Rank[card.rank as keyof typeof Rank] +
-      Suit[card.suit as keyof typeof Suit]
-    ).join(' ');
-  }
 }
 
 export const tryFor = (deck: Deck, tries: number = 5000): number | null => {
   for (let i = 1; i <= tries; i++) {
-    deck.create();
+    deck.openCards = [];
+    deck.currentIndex = deck.size - 1;
+    deck.shiftIndexes = [];
     deck.shuffle();
     deck.play();
     if (deck.openCards.length === 2) return i;

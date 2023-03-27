@@ -46,7 +46,8 @@ let result: number | null = 0;
       </div>
     </div>
     <div class="msc-basic">
-      <h3>Складывающаяся колода (на&#160;{{ result }}&#160;попытке)</h3>
+      <h3 v-if="!deck.played">Здесь будет складывающаяся колода</h3>
+      <h3 v-else>Складывающаяся колода (на&#160;{{ result }}&#160;попытке)</h3>
       <div class="msc-deck">
         <span
           v-for="shift in deck.cardsByShifts()"

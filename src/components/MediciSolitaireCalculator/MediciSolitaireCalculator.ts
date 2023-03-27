@@ -68,6 +68,7 @@ export class Deck {
         [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
       }
     }
+    this.played = false;
   }
   nextCard(): void {
     if (this.currentIndex < 0) return;
@@ -118,6 +119,7 @@ export class Deck {
       this.cards[index],
       this.cards[cardIndex]
     ];
+    this.played = false;
   }
   unsetStaticCard(index: number): void {
     const existingIndex = this.staticCards.findIndex(s => s.index === index);

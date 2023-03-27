@@ -105,7 +105,7 @@ export class Deck {
     const cardIndex = this.cards.findIndex(
       c => c.suit === card.suit && c.rank === card.rank
     );
-    if (cardIndex === -1 || cardIndex === index) return;
+    if (cardIndex === -1) return;
     const existingIndex = this.staticCards.findIndex(
       s => (s.index === index || s.card.suit === card.suit && s.card.rank === card.rank)
     );

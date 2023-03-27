@@ -32,3 +32,14 @@
     padding: 7px;
   }
 }
+@media screen and (max-width: 600px) {
+  .msc {
+    grid-template-areas:
+      ' header  '
+      ' service '
+      ' basic '
+    ;
+    grid-template-rows: auto auto 1fr;
+    grid-template-columns: 1fr;
+  }
+}

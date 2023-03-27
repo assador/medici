@@ -5,3 +5,7 @@ import MediciSolitaireCalculator from './components/MediciSolitaireCalculator/Me
 <template>
   <MediciSolitaireCalculator />
 </template>
+
+<style lang="scss">
+@import './style.scss';
+</style>

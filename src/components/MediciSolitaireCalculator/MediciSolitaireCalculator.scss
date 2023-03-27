@@ -1,0 +1,24 @@
+.msc {
+  display: grid;
+  grid-template-areas:
+    ' service basic '
+  ;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  height: 100%;
+  gap: 20px;
+  .msc-deck, .msc-shift {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .msc-shift {
+    margin: 4px;
+    padding: 7px;
+  }
+  .msc-card {
+    display: block;
+    padding: 7px;
+  }
+}

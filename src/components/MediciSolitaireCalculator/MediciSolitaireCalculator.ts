@@ -71,22 +71,6 @@ export class Deck {
       [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
     }
   }
-  printCards(): string {
-    return (
-      (this.shiftIndexes.length > 0 ? '<' : '') +
-      this.cards.map((card, i) => 
-        Rank[card.rank as keyof typeof Rank] +
-        Suit[card.suit as keyof typeof Suit] +
-        (this.shiftIndexes.includes(i) ? ' >' + (i > 0 ? '<' : '') : '')
-      ).reverse().join(' ')
-    );
-  }
-  printOpenCards(): string {
-    return this.openCards.map(card =>
-      Rank[card.rank as keyof typeof Rank] +
-      Suit[card.suit as keyof typeof Suit]
-    ).join(' ');
-  }
   nextCard(): void {
     if (this.currentIndex < 0) return;
     this.openCards.push(this.cards[this.currentIndex]);
@@ -116,14 +100,41 @@ export class Deck {
     }
     this.played = true;
   }
+  cardsByShifts(): Card[][] {
+    let shifts: Card[][] = [];
+    if (this.shiftIndexes.length === 0) return shifts = [this.cards];
+    for (let i = 0; i < this.shiftIndexes.length; i++) {
+      shifts.push(this.cards.slice(
+        this.shiftIndexes[i],
+        i === 0 ? undefined : this.shiftIndexes[i - 1]
+      ).reverse());
+    }
+    return shifts;
+  }
+  printCards(): string {
+    return (
+      (this.shiftIndexes.length > 0 ? '<' : '') +
+      this.cards.map((card, i) => 
+        Rank[card.rank as keyof typeof Rank] +
+        Suit[card.suit as keyof typeof Suit] +
+        (this.shiftIndexes.includes(i) ? ' >' + (i > 0 ? '<' : '') : '')
+      ).reverse().join(' ')
+    );
+  }
+  printOpenCards(): string {
+    return this.openCards.map(card =>
+      Rank[card.rank as keyof typeof Rank] +
+      Suit[card.suit as keyof typeof Suit]
+    ).join(' ');
+  }
 }
 
-export const tryFor = (deck: Deck, tries: number = 5000): string => {
+export const tryFor = (deck: Deck, tries: number = 5000): number | null => {
   for (let i = 1; i <= tries; i++) {
     deck.create();
     deck.shuffle();
     deck.play();
-    if (deck.openCards.length === 2) return `Получилось, итить! На ${i} раз…`;
+    if (deck.openCards.length === 2) return i;
   }
-  return `Ну, я хотя бы попробовал ${tries} раз…`;
+  return null;
 }

@@ -51,7 +51,7 @@ button, input, select, textarea {
 .msc-card:focus {
   outline: 1px solid hsl(0, 0%, 0%, 50%);
 }
-.msc-card__red {
+.msc-card__red, .msc-hint {
   color: hsl(0, 100%, 25%, 100%);
 }
 .msc-shift {

@@ -62,9 +62,10 @@ export class Deck {
     }
   }
   shuffle(): void {
+    let j: number;
     for (let i = this.cards.length - 1; i > 0; i--) {
-      if (i in this.reservedCards) continue;
-      let j = Math.floor(Math.random() * (i + 1));
+      j = Math.floor(Math.random() * (i + 1));
+      if (i in this.reservedCards || j in this.reservedCards) continue;
       [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
     }
     this.played = false;

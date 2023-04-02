@@ -145,6 +145,20 @@ const cardNumber = (
           </button>
         </span>
       </div>
+      <div v-if="deck.played">
+        <h3>Свёртки</h3>
+        <p class="msc-shifts">
+          <span>F({{ deck.shiftIndexes.length }})=</span>
+          <span v-for="(shift, index) in deck.shiftIndexes">
+            <template v-if="index === 0">
+              {{ deck.size - shift }}
+            </template>
+            <template v-else>
+              :{{ deck.shiftIndexes[index - 1] - shift }}
+            </template>
+          </span>
+        </p>
+      </div>
     </div>
   </div>
 </template>

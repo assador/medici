@@ -32,7 +32,7 @@ export class Deck {
   cards: Card[] = [];
   openCards: Card[] = [];
   shiftIndexes: number[] = [];
-  staticCards: {index: number, card: Card}[] = [];
+  reservedCards: {[index: number | string]: Card} = {};
   played: boolean = false;
   constructor(size = 36) {
     if (size <= 0 || size > 52 || size % 4 !== 0) throw new Error(
@@ -48,7 +48,7 @@ export class Deck {
     this.cards = [];
     this.openCards = [];
     this.shiftIndexes = [];
-    this.staticCards = [];
+    this.reservedCards = {};
     this.played = false;
     for (let suit in Suit) {
       for (let rank of Object.keys(Rank).slice(
@@ -63,10 +63,9 @@ export class Deck {
   }
   shuffle(): void {
     for (let i = this.cards.length - 1; i > 0; i--) {
+      if (i in this.reservedCards) continue;
       let j = Math.floor(Math.random() * (i + 1));
-      if (this.staticCards.findIndex(s => s.index === i || s.index === j) === -1) {
-        [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
-      }
+      [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
     }
     this.played = false;
   }
@@ -99,19 +98,24 @@ export class Deck {
     }
     this.played = true;
   }
-  setStaticCard(index: number, card: Card): void {
-    // Проверка существования задаваемого индекса
+  setReservedCard(index: number, card: Card): void {
+    // Проверка существования задаваемого индекса в рабочей колоде
     if (!this.cards[index]) return;
-    // Нахождение индекса в колоде задаваемой карты
+    // Нахождение индекса задаваемой карты в рабочей колоде
     const cardIndex = this.cards.findIndex(
       c => c.suit === card.suit && c.rank === card.rank
     );
     if (cardIndex === -1) return;
-    const existingIndex = this.staticCards.findIndex(
-      s => (s.index === index || s.card.suit === card.suit && s.card.rank === card.rank)
-    );
-    if (existingIndex !== -1) this.staticCards.splice(existingIndex, 1);
-    this.staticCards.push({index: index, card: this.cards[cardIndex]});
+    for (let i in this.reservedCards) {
+      if (
+        this.reservedCards[i].suit === card.suit &&
+        this.reservedCards[i].rank === card.rank
+      ) {
+        delete this.reservedCards[i];
+        break;
+      }
+    }
+    this.reservedCards[index] = this.cards[cardIndex];
     [
       this.cards[cardIndex],
       this.cards[index]
@@ -121,9 +125,8 @@ export class Deck {
     ];
     this.played = false;
   }
-  unsetStaticCard(index: number): void {
-    const existingIndex = this.staticCards.findIndex(s => s.index === index);
-    if (existingIndex !== -1) this.staticCards.splice(existingIndex, 1);
+  unsetReservedCard(index: number): void {
+    delete this.reservedCards[index];
   }
   cardsByShifts(): Card[][] {
     let shifts: Card[][] = [];

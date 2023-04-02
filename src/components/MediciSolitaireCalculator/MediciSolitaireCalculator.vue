@@ -4,7 +4,7 @@ import { Suit, Rank, Card, Deck, tryFor } from './MediciSolitaireCalculator';
 
 const deck = ref(new Deck());
 const auxiliaryDeck = ref(new Deck());
-const staticCard = ref();
+const reservedCard = ref();
 const hintBasicCards = ref();
 const hintReserveCards = ref();
 const hintReservedCards = ref();
@@ -51,15 +51,18 @@ const cardNumber = (
         >
           <button
             v-for="card in auxiliaryDeck.cards.filter(card => card.suit === suit)"
-            :class="'msc-card ' + (card.suit === 'Diamonds' || card.suit === 'Hearts' ? 'msc-card__red' : 'msc-card__black')"
-            @click="staticCard = card"
+            :class="'msc-card ' + (
+              card.suit === 'Diamonds' || card.suit === 'Hearts'
+                ? 'msc-card__red' : 'msc-card__black'
+            )"
+            @click="reservedCard = card"
           >
             <span>{{ Rank[card.rank as keyof typeof Rank] }}</span>
             <span>{{ Suit[card.suit as keyof typeof Suit] }}</span>
           </button>
         </span>
       </div>
-      <h3 v-if="deck.staticCards.length">
+      <h3 v-if="Object.keys(deck.reservedCards).length">
         <span>Предопределённые карты</span>
         <span
           ref="hintReservedCards"
@@ -72,16 +75,27 @@ const cardNumber = (
           какой-либо карты, нажмите на&#160;неё в&#160;этом&#160;блоке.
         </span>
       </h3>
-      <div v-if="deck.staticCards.length" class="msc-deck">
+      <div
+        v-if="Object.keys(deck.reservedCards).length" class="msc-deck">
         <span class="msc-shift">
           <button
-            v-for="card in deck.staticCards"
-            :class="'msc-card ' + (card.card.suit === 'Diamonds' || card.card.suit === 'Hearts' ? 'msc-card__red' : 'msc-card__black')"
-            @click="deck.unsetStaticCard(card.index)"
+            v-for="index in Object.keys(deck.reservedCards).reverse()"
+            :class="'msc-card ' + (
+              deck.reservedCards[index].suit === 'Diamonds' ||
+              deck.reservedCards[index].suit === 'Hearts'
+                ? 'msc-card__red' : 'msc-card__black'
+            )"
+            @click="deck.unsetReservedCard(Number(index))"
           >
-            <span>{{ Rank[card.card.rank as keyof typeof Rank] }}</span>
-            <span>{{ Suit[card.card.suit as keyof typeof Suit] }}</span>
-            <span class="msc-card-ext">№&#160;{{ deck.cards.length - card.index }}</span>
+            <span>
+              {{ Rank[deck.reservedCards[index].rank as keyof typeof Rank] }}
+            </span>
+            <span>
+              {{ Suit[deck.reservedCards[index].suit as keyof typeof Suit] }}
+            </span>
+            <span class="msc-card-ext">
+              №&#160;{{ deck.cards.length - Number(index) }}
+            </span>
           </button>
         </span>
       </div>
@@ -89,28 +103,45 @@ const cardNumber = (
     <div class="msc-basic">
       <h3>
         <span v-if="!deck.played">Рабочая колода</span>
-        <span v-else>Складывающаяся колода (попытка&#160;№&#160;{{ result }})</span>
+        <span v-else-if="result">
+          Складывающаяся колода (попытка&#160;№&#160;{{ result }})
+        </span>
+        <span v-else>
+          Пасьянс не сложился (всего попыток: {{ result }})
+        </span>
         <span
           ref="hintBasicCards"
           class="msc-hint"
           @click="hintBasicCards.classList.toggle('msc-hint-shown')"
         >
-          Здесь будет выводиться складывающаяся колода. Задайте начальные условия; например, предопределённые на&#160;нужных местах карты. Затем нажмите на&#160;кнопку «Сложить».
+          Здесь будет выводиться складывающаяся колода. Задайте начальные
+          условия; например, предопределённые на&#160;нужных местах карты.
+          Затем нажмите на&#160;кнопку «Сложить».
         </span>
       </h3>
-      <div class="msc-deck">
+      <div class="msc-deck msc-deck-work">
         <span
           v-for="(shift, shiftIndex) in deck.cardsByShifts()"
           class="msc-shift"
         >
           <button
             v-for="(card, cardIndex) in shift"
-            :class="'msc-card ' + (card.suit === 'Diamonds' || card.suit === 'Hearts' ? 'msc-card__red' : 'msc-card__black')"
-            @click="(e) => {if (Object.keys(staticCard).length) {deck.setStaticCard(deck.cards.indexOf(card), staticCard)}}"
+            :class="
+              'msc-card' +
+              (card.suit === 'Diamonds' || card.suit === 'Hearts'
+                ? ' msc-card__red' : ' msc-card__black'
+              ) +
+              (deck.cards.indexOf(card) in deck.reservedCards
+                ? ' msc-card__reserved' : ''
+              )
+            "
+            @click="(e) => {if (Object.keys(reservedCard).length) {deck.setReservedCard(deck.cards.indexOf(card), reservedCard)}}"
           >
             <span>{{ Rank[card.rank as keyof typeof Rank] }}</span>
             <span>{{ Suit[card.suit as keyof typeof Suit] }}</span>
-            <span class="msc-card-ext">{{ cardNumber(shiftIndex, cardIndex) + 1 }}</span>
+            <span class="msc-card-ext">
+              {{ cardNumber(shiftIndex, cardIndex) + 1 }}
+            </span>
           </button>
         </span>
       </div>

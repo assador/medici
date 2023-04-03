@@ -37,7 +37,7 @@ const cardNumber = (
 
 <template>
   <div class="msc">
-    <div class="msc-header">
+    <div class="msc-actions">
       <button type="button" @click="deck.create();">Новая</button>
       <button type="button" @click="result = tryFor(deck)">Сложить</button>
       <button
@@ -48,7 +48,7 @@ const cardNumber = (
         Сохранить в&#160;списке
       </button>
     </div>
-    <div class="msc-service">
+    <div class="msc-reserve">
       <h3>
         <span>Предопределение карт</span>
         <span
@@ -183,6 +183,8 @@ const cardNumber = (
           </span>
         </p>
       </div>
+    </div>
+    <div class="msc-list">
       <h3>
         Список сохранённых колод
         <span v-if="!Object.keys(deckList.decks).length">(пусто)</span>
@@ -196,6 +198,8 @@ const cardNumber = (
           «Сохранить в&#160;списке», которая появляется после расчёта
           сложенной колоды. Активная сложенная «рабочая» колода, показываемая
           в&#160;основной области, в&#160;этом списке выделена фоном.
+          Вы&#160;можете выбрать в&#160;этом списке любую сохранённую ранее
+          колоду. При&#160;этом она появится также в&#160;блоке «Рабочая колода».
           При&#160;внесении изменений в&#160;эту рабочую колоду, например,
           при&#160;добавлении зарезервированных карт с&#160;последующим новым
           расчётом и&#160;новом клике по&#160;кнопке «Сохранить в&#160;списке»

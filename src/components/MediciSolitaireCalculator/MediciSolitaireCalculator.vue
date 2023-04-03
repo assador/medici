@@ -1,32 +1,52 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Suit, Rank, Card, Deck, tryFor } from './MediciSolitaireCalculator';
+import _ from 'lodash';
+import {
+  Suit,
+  Rank,
+  Card,
+  Deck,
+  DeckList,
+  tryFor,
+} from './MediciSolitaireCalculator';
 
 const deck = ref(new Deck());
 const auxiliaryDeck = ref(new Deck());
-const reservedCard = ref();
+const deckList = ref(new DeckList());
+const reservedCard = ref<Card | null>(null);
+const result = ref<number | null>(0);
+// Elements refs
 const hintBasicCards = ref();
 const hintReserveCards = ref();
 const hintReservedCards = ref();
-let result: number | null = 0;
+const hintSavedDecks = ref();
 
 const cardNumber = (
+  indeck: Deck,
   shiftIndex: number,
   cardIndex: number
 ): number => {
   let index = 0;
   for (let shiftIdx = 0; shiftIdx < shiftIndex; shiftIdx++) {
-    index += deck.value.cardsByShifts()[shiftIdx].length;
+    index += indeck.cardsByShifts()[shiftIdx].length;
   }
   index += cardIndex;
   return index;
-}
+};
 </script>
 
 <template>
   <div class="msc">
     <div class="msc-header">
+      <button type="button" @click="deck = new Deck();">Новая</button>
       <button type="button" @click="result = tryFor(deck)">Сложить</button>
+      <button
+        v-if="deck.played"
+        type="button"
+        @click="deckList.add(deck);"
+      >
+        Сохранить в&#160;списке
+      </button>
     </div>
     <div class="msc-service">
       <h3>
@@ -135,12 +155,16 @@ const cardNumber = (
                 ? ' msc-card__reserved' : ''
               )
             "
-            @click="(e) => {if (Object.keys(reservedCard).length) {deck.setReservedCard(deck.cards.indexOf(card), reservedCard)}}"
+            @click="
+              (e) => {if (reservedCard && Object.keys(reservedCard).length) {
+                deck.setReservedCard(deck.cards.indexOf(card), reservedCard)
+              }}
+            "
           >
             <span>{{ Rank[card.rank as keyof typeof Rank] }}</span>
             <span>{{ Suit[card.suit as keyof typeof Suit] }}</span>
             <span class="msc-card-ext">
-              {{ cardNumber(shiftIndex, cardIndex) + 1 }}
+              {{ cardNumber(deck, shiftIndex, cardIndex) + 1 }}
             </span>
           </button>
         </span>
@@ -158,6 +182,60 @@ const cardNumber = (
             </template>
           </span>
         </p>
+      </div>
+      <h3>
+        Список сохранённых колод
+        <span v-if="!Object.keys(deckList.decks).length">(пусто)</span>
+        <span
+          ref="hintSavedDecks"
+          class="msc-hint"
+          @click="hintSavedDecks.classList.toggle('msc-hint-shown')"
+        >
+          Здесь будет выводиться список сохранённых вами в&#160;памяти
+          сложенных колод. Для&#160;сохранения сложенный колоды нажмите кнопку
+          «Сохранить в&#160;списке», которая появляется после расчёта
+          сложенной колоды. Активная сложенная «рабочая» колода, показываемая
+          в&#160;основной области, в&#160;этом списке выделена фоном.
+          При&#160;внесении изменений в&#160;эту рабочую колоду, например,
+          при&#160;добавлении зарезервированных карт с&#160;последующим новым
+          расчётом и&#160;новом клике по&#160;кнопке «Сохранить в&#160;списке»
+          новая рассчитанная колода будет сохранена вместо этой выделенной,
+          рассчитанной прежде! Если вы хотите сохранить в&#160;списке новый
+          расклад, перед ним нажмите на&#160;кнопку «Новая». При&#160;этом,
+          в&#160;списке сохранённых колод ни&#160;одна из&#160;них не&#160;будет
+          выделена.
+        </span>
+      </h3>
+      <div class="msc-deck-list">
+        <button
+          v-for="deckInList in deckList.decks"
+          :class="
+            'msc-deck' +
+            (deckInList.id === deck.id ? ' msc-deck__active' : '')
+          "
+          @click="deck = deckInList"
+        >
+          <span
+            v-for="(shift, shiftIndex) in deckInList.cardsByShifts()"
+            class="msc-shift"
+          >
+            <span
+              v-for="(card, cardIndex) in shift"
+              :class="
+                'msc-card' +
+                (card.suit === 'Diamonds' || card.suit === 'Hearts'
+                  ? ' msc-card__red' : ' msc-card__black'
+                ) +
+                (deckInList.cards.indexOf(card) in deckInList.reservedCards
+                  ? ' msc-card__reserved' : ''
+                )
+              "
+            >
+              <span>{{ Rank[card.rank as keyof typeof Rank] }}</span>
+              <span>{{ Suit[card.suit as keyof typeof Suit] }}</span>
+            </span>
+          </span>
+        </button>
       </div>
     </div>
   </div>

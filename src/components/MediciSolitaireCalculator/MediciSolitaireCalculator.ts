@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export enum Suit {
   Spades   = '♠',
   Clubs    = '♣',
@@ -26,7 +28,18 @@ export interface Card {
   rank: string;
 };
 
+const generateRandomString = (length = 32): string => {
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const numChars: number = chars.length;
+  let string = '';
+  for (let i = 0; i < length; i++) {
+    string += chars.substr(Math.floor(Math.random() * numChars), 1);
+  }
+  return string;
+};
+
 export class Deck {
+  id: string = generateRandomString();
   size: number;
   currentIndex: number;
   cards: Card[] = [];
@@ -124,6 +137,7 @@ export class Deck {
       this.cards[index],
       this.cards[cardIndex]
     ];
+    this.shiftIndexes = [];
     this.played = false;
   }
   unsetReservedCard(index: number): void {
@@ -142,6 +156,13 @@ export class Deck {
     }
     return shifts;
   }
+}
+
+export class DeckList {
+  decks: {[id: string]: Deck} = {};
+  add(deck: Deck): void {
+    this.decks[deck.id] = _.cloneDeep(deck);
+  };
 }
 
 export const tryFor = (deck: Deck, tries: number = 5000): number | null => {

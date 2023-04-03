@@ -22,16 +22,15 @@
       justify-content: right;
     }
   }
-  .msc-shift {
-    margin: 4px;
-    padding: 7px;
-  }
   .msc-shifts > span {
     display: inline-block;
   }
   .msc-card {
     display: block;
-    padding: 7px;
+  }
+  .msc-deck-list {
+    display: grid;
+    gap: 20px;
   }
   .msc-hint {
     display: inline-block;

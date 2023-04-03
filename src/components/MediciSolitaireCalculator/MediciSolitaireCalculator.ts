@@ -56,6 +56,7 @@ export class Deck {
     this.create(size);
   }
   create(size = 36): void {
+    this.id = generateRandomString();
     this.size = size;
     this.currentIndex = this.size - 1;
     this.cards = [];

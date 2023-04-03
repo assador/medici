@@ -38,7 +38,7 @@ const cardNumber = (
 <template>
   <div class="msc">
     <div class="msc-header">
-      <button type="button" @click="deck = new Deck();">Новая</button>
+      <button type="button" @click="deck.create();">Новая</button>
       <button type="button" @click="result = tryFor(deck)">Сложить</button>
       <button
         v-if="deck.played"

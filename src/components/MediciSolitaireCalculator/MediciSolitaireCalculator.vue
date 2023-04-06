@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import _ from 'lodash';
 import {
   Suit,
   Rank,
@@ -16,6 +15,7 @@ const deckList = ref(new DeckList());
 const reservedCard = ref<Card | null>(null);
 const result = ref<number | null>(0);
 // Elements refs
+const inputImportFromFile = ref();
 const hintBasicCards = ref();
 const hintReserveCards = ref();
 const hintReservedCards = ref();
@@ -33,20 +33,67 @@ const cardNumber = (
   index += cardIndex;
   return index;
 };
+const exportToFile = (): void => {
+  const mime = 'application/json';
+  const a = document.createElement('a');
+  a.download = 'msc_exported.json';
+  a.dataset.downloadurl = ['application/json', a.download, a.href].join(':');
+  a.href = URL.createObjectURL(
+    new Blob(
+      [JSON.stringify({
+        deck: deck.value,
+        deckList: deckList.value,
+      })],
+      {type: 'text/plain'}
+    )
+  );
+  a.click();
+};
+const importFromFile = (): void => {
+  const mime =
+    (inputImportFromFile.value as HTMLInputElement).files![0].type
+  ;
+  if (mime !== 'application/json') return;
+  const reader = new FileReader();
+  reader.onload = (event: Event) => {
+    const importedObject = JSON.parse(
+      (event.target as FileReader).result as string
+    );
+    deck.value.import(importedObject.deck);
+    deckList.value.import(importedObject.deckList);
+    (inputImportFromFile.value as HTMLInputElement).value = '';
+  };
+  reader.readAsText((inputImportFromFile.value as HTMLInputElement).files![0]);
+};
 </script>
 
 <template>
   <div class="msc">
     <div class="msc-actions">
       <button type="button" @click="deck.create();">Новая</button>
-      <button type="button" @click="result = tryFor(deck)">Сложить</button>
+      <button type="button" @click="result = tryFor(deck);">Сложить</button>
       <button
         v-if="deck.played"
         type="button"
         @click="deckList.add(deck);"
       >
-        Сохранить в&#160;списке
+        Добавить в&#160;список
       </button>
+      <button type="button" @click="exportToFile();">Сохранить</button>
+      <button
+        type="button"
+        @click="inputImportFromFile.click();"
+      >
+        Импортировать
+      </button>
+      <input
+          id="inputImportFromFile"
+          ref="inputImportFromFile"
+          name="jsonFile"
+          type="file"
+          accept=".json"
+          @change="importFromFile();"
+      />
     </div>
     <div class="msc-reserve">
       <h3>
@@ -175,7 +222,7 @@ const cardNumber = (
           <span>F({{ deck.shiftIndexes.length }})=</span>
           <span v-for="(shift, index) in deck.shiftIndexes">
             <template v-if="index === 0">
-              {{ deck.size - shift }}
+              {{ deck.cards.length - shift }}
             </template>
             <template v-else>
               :{{ deck.shiftIndexes[index - 1] - shift }}

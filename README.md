@@ -1,6 +1,6 @@
 # Medici Solitaire Calculator
 
-v1.3.2
+v1.4.0
 
 Свободный скрипт для складывания пасьянса Медичи.
 
@@ -30,7 +30,11 @@ v1.3.2
 
 ### «Список сохранённых колод»
 
-В этом блоке будет выводиться список сохранённых вами в памяти сложенных колод. Для сохранения сложенный колоды нажмите кнопку «Сохранить в списке», которая появляется после расчёта сложенной колоды. Активная сложенная «рабочая» колода, показываемая в основной области, в этом списке выделена фоном. Вы можете выбрать в этом списке любую сохранённую ранее колоду. При этом она появится также в блоке «Рабочая колода». При внесении изменений в эту рабочую колоду, например, при добавлении зарезервированных (предопределённых) карт с последующим новым расчётом и новом клике по кнопке «Сохранить в списке» новая рассчитанная колода будет сохранена вместо этой выделенной, рассчитанной прежде! Если вы хотите сохранить в списке новый расклад, перед ним нажмите на кнопку «Новая». При этом, в списке сохранённых колод ни одна из них не будет выделена.
+В этом блоке будет выводиться список сохранённых вами в памяти сложенных колод. Для сохранения сложенный колоды нажмите кнопку «Добавить в список», которая появляется после расчёта сложенной колоды. Активная сложенная «рабочая» колода, показываемая в основной области, в этом списке выделена фоном. Вы можете выбрать в этом списке любую сохранённую ранее колоду. При этом она появится также в блоке «Рабочая колода». При внесении изменений в эту рабочую колоду, например, при добавлении зарезервированных (предопределённых) карт с последующим новым расчётом и новом клике по кнопке «Добавить в список» новая рассчитанная колода будет сохранена вместо этой выделенной, рассчитанной прежде! Если вы хотите сохранить в списке новый расклад, перед ним нажмите на кнопку «Новая». При этом, в списке сохранённых колод ни одна из них не будет выделена.
+
+### Импорт и экспорт
+
+Вы можете сохранять результаты работы в файл и загружать ранее сохранённые из файла. Для сохранения нажмите на кнопку «Сохранить». Вам будет предложено сохранить куда-нибудь файл в формате JSON. Для загрузки из файла нажмите на кнопку «Импортировать». Экспортируются в файл и импортируются из файла: рабочая колода и список сохранённых колод.
 
 ***
 Если у вас вдруг возникло глупое желание пожертвовать мне денежку, бескорыстно или нет, вы можете сделать это здесь: <https://www.paypal.me/niaouveas>. Бескорыстное желание, если таковое имеется, можно выразить, написав письмо на [assador@gmail.com](mailto:assador@gmail.com).
@@ -67,6 +71,10 @@ Below this ordered deck block, the cards you have already predetermined are sh
 ### “Saved Deck List”
 
 This block will display a list of your saved folded decks. To save the folded deck, press the “Save to list” button that appears after the calculation of the folded deck. The active “working” folded deck, shown in the main area, is highlighted in the background in this list. You can select any previously saved deck in this list. It will also appear in the “Working deck“ block. When you make changes to this working deck, such as adding reserved (predetermined) cards followed by a new calculation and clicking the “Save to list” button again, the new calculated deck will be saved instead of this previously calculated selected one! If you want to save a new deck to the list, click the “New” button before it. In this case, in the list of saved decks, none of them will be highlighted.
+
+### Import and export
+
+You can save your results to a file and load previously saved from the file. To save, click the “Save” button. You will be prompted to save the file in JSON format somewhere. To load from a file, click on the “Import” button. Exporting to file and importing from file: the working deck and the list of saved decks.
 
 ***
 If you suddenly have a foolish desire to donate, disinterestedly or selfishly, you can do it here: <https://www.paypal.me/niaouveas>. Self-interest, if any, can be expressed by writing a letter to [assador@gmail.com](mailto:assador@gmail.com).

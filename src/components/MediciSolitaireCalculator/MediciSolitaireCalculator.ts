@@ -201,7 +201,7 @@ export class DeckList {
     if (!deckList.decks) return false;
     this.decks = {};
     for (let deck of Object.values(deckList.decks)) {
-      if (typeof deck !== 'string' || typeof deck !== 'object') continue;
+      if (typeof deck !== 'string' && typeof deck !== 'object') continue;
       const newDeck = new Deck(null);
       if (newDeck.import(deck)) this.decks[newDeck.id] = newDeck;
     }

@@ -267,6 +267,12 @@ const importFromFile = (): void => {
           @click="deck = deckInList"
         >
           <span
+            class="msc-delete"
+            @click="(e) => {e.stopPropagation(); deckList.remove(deckInList);}"
+          >
+            🗑
+          </span>
+          <span
             v-for="(shift, shiftIndex) in deckInList.cardsByShifts()"
             class="msc-shift"
           >

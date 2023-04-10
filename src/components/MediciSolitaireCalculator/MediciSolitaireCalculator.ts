@@ -196,6 +196,9 @@ export class DeckList {
   add(deck: Deck): void {
     this.decks[deck.id] = _.cloneDeep(deck);
   };
+  remove(deck: Deck | string): void {
+    delete this.decks[typeof deck === 'string' ? deck : deck.id];
+  };
   import(deckList: any): boolean {
     if (typeof deckList === 'string') deckList = JSON.parse(deckList);
     if (!deckList.decks) return false;

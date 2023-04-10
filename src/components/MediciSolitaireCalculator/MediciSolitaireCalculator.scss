@@ -43,6 +43,21 @@
   .msc-deck-list {
     display: grid;
     gap: 20px;
+    .msc-deck {
+      position: relative;
+      margin-right: 3rem;
+      &.msc-deck__active {
+        margin-right: 3rem;
+      }
+      .msc-delete {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 0; bottom: 0; left: 100%;
+        width: 3rem;
+      }
+    }
   }
   .msc-hint {
     display: inline-block;

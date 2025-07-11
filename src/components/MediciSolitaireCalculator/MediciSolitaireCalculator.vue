@@ -33,20 +33,36 @@ const cardNumber = (
 	index += cardIndex;
 	return index;
 };
-const exportToFile = (): void => {
-	const mime = 'application/json';
+const exportToFile = (mime: string): void => {
 	const a = document.createElement('a');
-	a.download = 'msc_exported.json';
-	a.dataset.downloadurl = ['application/json', a.download, a.href].join(':');
-	a.href = URL.createObjectURL(
-		new Blob(
-			[JSON.stringify({
-				deck: deck.value,
-				deckList: deckList.value,
-			})],
-			{type: 'text/plain'}
-		)
-	);
+	switch (mime) {
+		case 'text/plain':
+			let text = 'Складывающаяся колода\n';
+			const cardsByShifts = deck.value.cardsByShifts();
+			for (let i = 0; i < cardsByShifts.length; i++) {
+				text += `\n`;
+				for (const shift of cardsByShifts[i]) {
+					text += ` ${(shift.rank.length > 1 ? '' : ' ') + shift.rank}${shift.suit} — \n`;
+				}
+			}
+			a.download = 'msc_exported.txt';
+			a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+			a.href = URL.createObjectURL(new Blob([text], {type: 'text/plain'}));
+			break;
+		default:
+			a.download = 'msc_exported.json';
+			a.dataset.downloadurl = ['application/json', a.download, a.href].join(':');
+			a.href = URL.createObjectURL(
+				new Blob(
+					[JSON.stringify({
+						deck: deck.value,
+						deckList: deckList.value,
+					})],
+					{type: 'text/plain'}
+				)
+			);
+			break;
+	}
 	a.click();
 };
 const importFromFile = (): void => {
@@ -73,18 +89,31 @@ const importFromFile = (): void => {
 			<button type="button" @click="deck.create();">Новая</button>
 			<button type="button" @click="result = tryFor(deck);">Сложить</button>
 			<button
+				type="button"
+				@click="inputImportFromFile.click();"
+			>
+				Импортировать
+			</button>
+			<button
 				v-if="deck.played"
 				type="button"
 				@click="deckList.add(deck);"
 			>
 				Добавить в&#160;список
 			</button>
-			<button type="button" @click="exportToFile();">Сохранить</button>
 			<button
+				v-if="deck.played"
 				type="button"
-				@click="inputImportFromFile.click();"
+				@click="exportToFile('text/plain')
+			">
+				Сохранить как текст
+			</button>
+			<button
+				v-if="deck.played"
+				type="button"
+				@click="exportToFile('application/json')"
 			>
-				Импортировать
+				Сохранить для импорта
 			</button>
 			<input
 					id="inputImportFromFile"

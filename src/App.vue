@@ -3,9 +3,9 @@ import MediciSolitaireCalculator from './components/MediciSolitaireCalculator/Me
 </script>
 
 <template>
-  <MediciSolitaireCalculator />
+	<MediciSolitaireCalculator />
 </template>
 
 <style lang="scss">
-@import './style.scss';
+@use './style.scss';
 </style>

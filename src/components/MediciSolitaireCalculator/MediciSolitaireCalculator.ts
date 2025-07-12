@@ -1,32 +1,5 @@
 import _ from 'lodash';
-
-export enum Suit {
-	Spades   = '♠',
-	Clubs    = '♣',
-	Diamonds = '♦',
-	Hearts   = '♥',
-};
-
-export enum Rank {
-	Two   = '2',
-	Three = '3',
-	Four  = '4',
-	Five  = '5',
-	Six   = '6',
-	Seven = '7',
-	Eight = '8',
-	Nine  = '9',
-	Ten   = '10',
-	Jack  = 'J',
-	Queen = 'Q',
-	King  = 'K',
-	Ace   = 'A',
-};
-
-export interface Card {
-	suit: Suit;
-	rank: Rank;
-};
+import { Suit, Rank, Card } from './types';
 
 const generateRandomString = (length = 32): string => {
 	const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -70,6 +43,22 @@ export class Deck {
 				this.cards.push({suit, rank});
 			}
 		}
+	}
+	static fromJSON(data: any): Deck {
+		const deck = new Deck(null);
+		deck.id = data.id;
+		deck.currentIndex = data.currentIndex;
+		deck.cards = data.cards || [];
+		deck.openCards = data.openCards || [];
+		deck.shiftIndexes = data.shiftIndexes || [];
+		deck.played = data.played;
+		deck.reservedCards = {};
+		if (data.reservedCards) {
+			for (const key in data.reservedCards) {
+				deck.reservedCards[key] = data.reservedCards[key];
+			}
+		}
+		return deck;
 	}
 	shuffle(): void {
 		let j: number;
@@ -193,9 +182,29 @@ export class DeckList {
 	add(deck: Deck): void {
 		this.decks[deck.id] = _.cloneDeep(deck);
 	};
-	remove(deck: Deck | string): void {
-		delete this.decks[typeof deck === 'string' ? deck : deck.id];
+	remove(deck: Deck): void {
+		delete this.decks[deck.id];
 	};
+	static fromJSON(dataList: any): DeckList {
+		const deckList = new DeckList();
+		for (const data of Object.values(dataList.decks)) {
+			const deck = new Deck(null);
+			deck.id = (data as Deck).id;
+			deck.currentIndex = (data as Deck).currentIndex;
+			deck.cards = (data as Deck).cards || [];
+			deck.openCards = (data as Deck).openCards || [];
+			deck.shiftIndexes = (data as Deck).shiftIndexes || [];
+			deck.played = (data as Deck).played;
+			deck.reservedCards = {};
+			if ((data as Deck).reservedCards) {
+				for (const key in (data as Deck).reservedCards) {
+					deck.reservedCards[key] = (data as Deck).reservedCards[key];
+				}
+			}
+			deckList.add(deck);
+		}
+		return deckList;
+	}
 	import(deckList: any): boolean {
 		if (typeof deckList === 'string') deckList = JSON.parse(deckList);
 		if (!deckList.decks) return false;

@@ -1,7 +1,7 @@
 {
 	"name": "medici",
 	"private": true,
-	"version": "1.5.1",
+	"version": "1.6.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
@@ -9,16 +9,17 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"vue": "latest"
+		"pinia": "^3.0.3",
+		"vue": "^3.5.17"
 	},
 	"devDependencies": {
-		"@types/lodash": "latest",
-		"@vitejs/plugin-vue": "latest",
-		"lodash": "latest",
-		"sass": "latest",
-		"sass-loader": "latest",
-		"typescript": "latest",
-		"vite": "latest",
-		"vue-tsc": "latest"
+		"@types/lodash": "^4.17.20",
+		"@vitejs/plugin-vue": "^6.0.0",
+		"lodash": "^4.17.21",
+		"sass": "^1.89.2",
+		"sass-loader": "^16.0.5",
+		"typescript": "^5.8.3",
+		"vite": "^7.0.4",
+		"vue-tsc": "^3.0.1"
 	}
 }
